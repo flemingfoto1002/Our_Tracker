@@ -1,3 +1,11 @@
+Below is the complete, updated single-file codebase containing the revised
+sidebar navigation system controlled by a glowing Heart trigger icon, full
+mobile responsive layout rules, tap overlays, and click-outside automatic
+stealth close handlers.
+
+The structural changes have been integrated directly into the layout to ensure
+the code remains fully operational.
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -23,7 +31,7 @@
       --text-muted: #B3A5B8;
       --card-bg: rgba(23, 10, 30, 0.65);
       --card-border: rgba(233, 30, 99, 0.15);
-      --sidebar-bg: rgba(14, 4, 19, 0.85);
+      --sidebar-bg: rgba(14, 4, 19, 0.95);
       --primary-font: 'Plus Jakarta Sans', sans-serif;
       --heading-font: 'Playfair Display', serif;
       --vault-left-gradient: #150522;
@@ -38,7 +46,7 @@
       --text-muted: #7A5C63;
       --card-bg: rgba(255, 255, 255, 0.75);
       --card-border: rgba(255, 105, 180, 0.2);
-      --sidebar-bg: rgba(255, 240, 245, 0.9);
+      --sidebar-bg: rgba(255, 240, 245, 0.98);
       --primary-font: 'Quicksand', sans-serif;
       --heading-font: 'Quicksand', sans-serif;
       --vault-left-gradient: #ffeaf3;
@@ -53,7 +61,7 @@
       --text-muted: #5E4A56;
       --card-bg: rgba(255, 255, 255, 0.92);
       --card-border: rgba(255, 20, 147, 0.3);
-      --sidebar-bg: rgba(255, 255, 255, 0.95);
+      --sidebar-bg: rgba(255, 255, 255, 0.98);
       --primary-font: 'Montserrat', sans-serif;
       --heading-font: 'Montserrat', sans-serif;
       --vault-left-gradient: #ff9ccb;
@@ -68,7 +76,7 @@
       --text-muted: #A0A0A0;
       --card-bg: rgba(22, 22, 22, 0.85);
       --card-border: rgba(229, 9, 20, 0.25);
-      --sidebar-bg: rgba(15, 15, 15, 0.95);
+      --sidebar-bg: rgba(15, 15, 15, 0.98);
       --primary-font: 'Plus Jakarta Sans', sans-serif;
       --heading-font: 'Orbitron', sans-serif;
       --vault-left-gradient: #1c1c1c;
@@ -285,35 +293,104 @@
     }
 
     /* ------------------------------------------------------------------
-       4. MAIN SYSTEM GRID INTERFACE
+       4. SYSTEM GRID INTERFACE & collapsable STEALH SIDEBAR
        ------------------------------------------------------------------ */
     #main-app {
-      display: grid;
-      grid-template-columns: 280px 1fr;
+      display: block;
       height: 100vh;
       width: 100vw;
       z-index: 1;
       position: relative;
     }
 
-    /* Sidebar Navigation */
+    /* Floating Heart Trigger Controller */
+    .heart-nav-toggle {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      display: none; /* Display is toggled JS side after login */
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 1001; /* Layer above sidebars and overlays */
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      backdrop-filter: blur(12px);
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .heart-nav-toggle:hover {
+      transform: scale(1.1);
+      border-color: var(--accent-color);
+      box-shadow: var(--accent-glow);
+    }
+
+    .heart-nav-toggle.active {
+      transform: scale(0.95);
+      border-color: var(--accent-color);
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .heart-nav-toggle-icon {
+      font-size: 1.5rem;
+      animation: beat 2.5s infinite ease-in-out;
+    }
+
+    /* Sidebar Navigation (Hidden by Default/Stealth Mode) */
     .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 290px;
+      height: 100%;
       background: var(--sidebar-bg);
-      backdrop-filter: blur(16px);
+      backdrop-filter: blur(25px);
+      -webkit-backdrop-filter: blur(25px);
       border-right: 1px solid var(--card-border);
-      padding: 30px 20px;
+      padding: 90px 20px 30px 20px; /* Leave space for top-aligned Heart toggle */
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      height: 100%;
-      z-index: 5;
+      z-index: 1000;
+      transform: translateX(-100%); /* Off-screen stealth mode by default */
+      transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .sidebar.open {
+      transform: translateX(0); /* Slides gracefully into view */
+    }
+
+    /* Glassmorphism backdrop blur overlay click area */
+    .sidebar-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      opacity: 0;
+      pointer-events: none;
+      z-index: 999;
+      transition: opacity 0.5s ease;
+    }
+
+    .sidebar-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
     }
 
     .sidebar-brand {
       display: flex;
       align-items: center;
       gap: 12px;
-      margin-bottom: 30px;
+      margin-bottom: 20px;
     }
 
     .brand-heart {
@@ -376,6 +453,7 @@
       text-align: left;
       cursor: pointer;
       transition: all 0.3s;
+      -webkit-tap-highlight-color: transparent;
     }
 
     .nav-item:hover, .nav-item.active {
@@ -470,7 +548,8 @@
       position: relative;
       height: 100%;
       overflow-y: auto;
-      padding: 40px;
+      padding: 100px 40px 40px 40px; /* Top padding to allow workspace design clear of heart toggle */
+      width: 100%;
     }
 
     .app-view {
@@ -495,6 +574,7 @@
       border: 1px solid var(--card-border);
       border-radius: 20px;
       backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
       padding: 30px;
       box-shadow: 0 10px 30px rgba(0,0,0,0.15);
       margin-bottom: 25px;
@@ -1074,6 +1154,7 @@
       box-shadow: 0 10px 30px rgba(0,0,0,0.3);
       backdrop-filter: blur(8px);
       transition: all 0.3s;
+      -webkit-tap-highlight-color: transparent;
     }
 
     .anchor-heart-btn:hover {
@@ -1192,7 +1273,7 @@
     .padlock-icon {
       font-size: 2.2rem;
       margin-bottom: 15px;
-      animation: heartbeat 2.5s infinite;
+      animation: beat 2.5s infinite;
     }
 
     .pillow-thoughts-list {
@@ -1388,8 +1469,9 @@
       height: 100%;
       background: var(--sidebar-bg);
       backdrop-filter: blur(25px);
+      -webkit-backdrop-filter: blur(25px);
       border-left: 1px solid var(--card-border);
-      z-index: 1000;
+      z-index: 2000;
       padding: 30px;
       transition: right 0.5s cubic-bezier(0.16, 1, 0.3, 1);
       display: flex;
@@ -1447,7 +1529,8 @@
       height: 100%;
       background: rgba(0, 0, 0, 0.7);
       backdrop-filter: blur(8px);
-      z-index: 2000;
+      -webkit-backdrop-filter: blur(8px);
+      z-index: 3000;
       display: none;
       align-items: center;
       justify-content: center;
@@ -1507,6 +1590,81 @@
       color: #FFF;
       cursor: pointer;
     }
+
+    /* ------------------------------------------------------------------
+       12. MOBILE & TABLET LAYOUT ENGINE RESPONSIVENESS
+       ------------------------------------------------------------------ */
+    @media (max-width: 992px) {
+      .dashboard-metrics-grid, 
+      .schedule-view-layout, 
+      .calendar-todo-layout, 
+      .vault-layout {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+
+      .habit-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .vision-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .content-area {
+        padding: 90px 16px 80px 16px; /* Optimized safety area for scrolling and widgets */
+      }
+
+      .dashboard-welcome-title {
+        font-size: 1.7rem;
+      }
+
+      .habit-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .vision-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        width: 82vw; /* Generous navigation width on small viewports */
+        max-width: 310px;
+      }
+
+      .split-route-container {
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .clock-display-wrapper {
+        width: 190px;
+        height: 190px;
+      }
+
+      .progress-ring {
+        width: 190px;
+        height: 190px;
+      }
+
+      .progress-ring circle {
+        r: 80;
+        cx: 95;
+        cy: 95;
+      }
+
+      /* Adjusting Dasharray for 80px radius (2 * pi * 80 = 502.6) */
+      .progress-ring-bar {
+        stroke-dasharray: 502.6;
+        stroke-dashoffset: 502.6;
+      }
+
+      #live-time {
+        font-size: 1.8rem;
+      }
+    }
   </style>
 </head>
 <body>
@@ -1537,19 +1695,27 @@
         </select>
         
         <label for="login-key">Enter Our Secret Key:</label>
-        <input type="password" id="login-key" placeholder="Confession day" required />
+        <input type="password" id="login-key" placeholder="Confession Day" required />
         
         <button type="submit" class="login-btn">Unlock Connection</button>
       </form>
-      <p class="passkey-hint">Hint: Enter 'Confession day'</p>
+      <p class="passkey-hint">Hint: Enter 'Confession Day'</p>
     </div>
   </div>
 
   <!-- ------------------------------------------------------------------
        2. COHESIVE MAIN APP INTERFACE
        ------------------------------------------------------------------ -->
+  <!-- Permanent Floating Heart Trigger Button -->
+  <button id="heart-nav-toggle" class="heart-nav-toggle" onclick="toggleSidebar()" title="Toggle Navigation Menu">
+    <span class="heart-nav-toggle-icon">💖</span>
+  </button>
+
   <div id="main-app" style="display: none;">
-    <!-- Sidebar Navigation -->
+    <!-- Glassmorphism backdrop overlay (Click outside area to close) -->
+    <div id="sidebar-overlay" class="sidebar-overlay" onclick="closeSidebar()"></div>
+
+    <!-- Collapsible Stealth Sidebar Navigation -->
     <aside class="sidebar">
       <div class="sidebar-wrapper">
         <div class="sidebar-brand">
@@ -1628,7 +1794,7 @@
           <div class="card">
             <h3>"Grow Together" Habits</h3>
             <p class="section-subtitle">Keep our physical, mental, and emotional core robust together</p>
-            <div id="habits-container" class="habit-grid-vertical" style="display:flex; flex-direction:column; gap:12px;">
+            <div id="habits-container" class="habit-grid" style="display:flex; flex-direction:column; gap:12px;">
               <!-- Dynamic habits list populate here -->
             </div>
           </div>
@@ -1782,8 +1948,8 @@
       <section id="view-vision" class="app-view">
         <div class="vision-board-header">
           <div>
-            <h2 style="font-family: var(--heading-font); font-size: 1.8rem; margin-bottom: 4px;">Collective Vision Board 🥂</h2>
-            <p style="color: var(--text-muted); font-size: 0.95rem;">Our mutual 5-year targets mapped visually. Together, we are building an empire.</p>
+            <h2 style="font-family: var(--heading-font); font-size: 1.8rem; margin-bottom: 4px;">Collective Vision Board 🔮</h2>
+            <p style="color: var(--text-muted); font-size: 0.95rem;">Our mutual 5-year targets mapped visually. Together, we are building our future.</p>
           </div>
           <button class="add-task-btn" onclick="toggleVisionModal(true)">+ Script a Goal</button>
         </div>
@@ -1998,8 +2164,9 @@
             
             // Lock out gate, open operations area
             document.getElementById("login-gate").style.display = "none";
-            document.getElementById("main-app").style.display = "grid";
+            document.getElementById("main-app").style.display = "block";
             document.getElementById("anchor-heart-btn").style.display = "flex";
+            document.getElementById("heart-nav-toggle").style.display = "flex";
             
             await initializeApplication();
           }
@@ -2042,8 +2209,9 @@
 
         setTimeout(() => {
           gate.style.display = "none";
-          document.getElementById("main-app").style.display = "grid";
+          document.getElementById("main-app").style.display = "block";
           document.getElementById("anchor-heart-btn").style.display = "flex";
+          document.getElementById("heart-nav-toggle").style.display = "flex"; // Make heart menu trigger visible
           initializeApplication();
         }, 1200);
       } else {
@@ -2063,6 +2231,29 @@
         }
         location.reload();
       }
+    }
+
+    /* -------------------------------------------------------------
+       SIDEBAR / STEALTH TOGGLE ARCHITECTURE
+       ------------------------------------------------------------- */
+    function toggleSidebar() {
+      const sidebar = document.querySelector(".sidebar");
+      const overlay = document.getElementById("sidebar-overlay");
+      const toggleBtn = document.getElementById("heart-nav-toggle");
+
+      const isOpen = sidebar.classList.toggle("open");
+      overlay.classList.toggle("active", isOpen);
+      toggleBtn.classList.toggle("active", isOpen);
+    }
+
+    function closeSidebar() {
+      const sidebar = document.querySelector(".sidebar");
+      const overlay = document.getElementById("sidebar-overlay");
+      const toggleBtn = document.getElementById("heart-nav-toggle");
+
+      sidebar.classList.remove("open");
+      overlay.classList.remove("active");
+      toggleBtn.classList.remove("active");
     }
 
     /* -------------------------------------------------------------
@@ -2516,7 +2707,7 @@
     function setClockRingProgress(percent) {
       const bar = document.querySelector(".progress-ring-bar");
       if (!bar) return;
-      const circumference = 596.9; // 2 * pi * 95
+      const circumference = window.innerWidth <= 768 ? 502.6 : 596.9; // Dynamic circumference for mobile adaptive sizing
       const offset = circumference - (percent / 100) * circumference;
       bar.style.strokeDashoffset = offset;
     }
@@ -3117,6 +3308,9 @@
           n.classList.remove("active");
         }
       });
+
+      // Automatically collapse sidebar (stealth mode trigger) when view transitions
+      closeSidebar();
     }
 
     /* -------------------------------------------------------------
