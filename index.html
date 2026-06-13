@@ -83,6 +83,11 @@
       padding: 0;
     }
 
+    html, body {
+      max-width: 100%;
+      overflow-x: hidden;
+    }
+
     body {
       font-family: var(--primary-font);
       color: var(--text-color);
@@ -284,7 +289,7 @@
     }
 
     /* ------------------------------------------------------------------
-       4. SYSTEM GRID INTERFACE & collapsable STEALH SIDEBAR
+       4. SYSTEM GRID INTERFACE & COLLAPSIBLE STEALTH SIDEBAR
        ------------------------------------------------------------------ */
     #main-app {
       display: block;
@@ -305,11 +310,11 @@
       background: var(--card-bg);
       border: 1px solid var(--card-border);
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-      display: none; /* Display is toggled JS side after login */
+      display: none; 
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      z-index: 1001; /* Layer above sidebars and overlays */
+      z-index: 1001; 
       transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       backdrop-filter: blur(12px);
       -webkit-tap-highlight-color: transparent;
@@ -343,20 +348,20 @@
       backdrop-filter: blur(25px);
       -webkit-backdrop-filter: blur(25px);
       border-right: 1px solid var(--card-border);
-      padding: 90px 20px 30px 20px; /* Leave space for top-aligned Heart toggle */
+      padding: 90px 20px 30px 20px; 
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       z-index: 1000;
-      transform: translateX(-100%); /* Off-screen stealth mode by default */
+      transform: translateX(-100%); 
       transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .sidebar.open {
-      transform: translateX(0); /* Slides gracefully into view */
+      transform: translateX(0); 
     }
 
-    /* Glassmorphism backdrop blur overlay click area */
+    /* Glassmorphism backdrop overlay (Click outside area to close) */
     .sidebar-overlay {
       position: fixed;
       top: 0;
@@ -539,7 +544,7 @@
       position: relative;
       height: 100%;
       overflow-y: auto;
-      padding: 100px 40px 40px 40px; /* Top padding to allow workspace design clear of heart toggle */
+      padding: 100px 40px 40px 40px; 
       width: 100%;
     }
 
@@ -569,6 +574,8 @@
       padding: 30px;
       box-shadow: 0 10px 30px rgba(0,0,0,0.15);
       margin-bottom: 25px;
+      max-width: 100%;
+      overflow: hidden;
     }
 
     .card h3 {
@@ -775,6 +782,11 @@
       color: #FFF;
     }
 
+    .slot-info-details {
+      flex: 1;
+      min-width: 0;
+    }
+
     .slot-info-details h4 {
       font-size: 1.05rem;
       margin-bottom: 3px;
@@ -787,6 +799,7 @@
 
     .custom-task-inline-editor {
       margin-top: 10px;
+      width: 100%;
     }
 
     .custom-task-inline-editor input {
@@ -796,7 +809,9 @@
       border: 1px solid rgba(255,255,255,0.1);
       color: #FFF;
       font-size: 0.85rem;
-      width: 250px;
+      width: 100%;
+      max-width: 250px;
+      box-sizing: border-box;
     }
 
     /* Split routes visually beautiful */
@@ -845,6 +860,8 @@
       border: 1px solid rgba(255, 255, 255, 0.05);
       border-radius: 16px;
       padding: 20px;
+      max-width: 100%;
+      box-sizing: border-box;
     }
 
     .calendar-control-header {
@@ -925,6 +942,7 @@
       color: #FFF;
       font-size: 0.9rem;
       margin-bottom: 12px;
+      box-sizing: border-box;
     }
 
     .task-form-row {
@@ -939,6 +957,7 @@
       border: 1px solid rgba(255, 255, 255, 0.1);
       border-radius: 8px;
       color: #FFF;
+      min-width: 0;
     }
 
     .add-task-btn {
@@ -949,6 +968,7 @@
       border-radius: 8px;
       cursor: pointer;
       font-weight: 600;
+      white-space: nowrap;
     }
 
     /* Checklist dynamic list layout */
@@ -967,6 +987,7 @@
       background: rgba(255,255,255,0.02);
       border: 1px solid rgba(255, 255, 255, 0.04);
       transition: all 0.2s;
+      gap: 10px;
     }
 
     .task-item.completed {
@@ -979,6 +1000,8 @@
       gap: 14px;
       cursor: pointer;
       user-select: none;
+      flex: 1;
+      min-width: 0;
     }
 
     .custom-checkbox {
@@ -989,6 +1012,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      flex-shrink: 0;
     }
 
     .completed .custom-checkbox {
@@ -1003,8 +1027,15 @@
       font-weight: 900;
     }
 
+    .task-text-container {
+      flex: 1;
+      min-width: 0;
+    }
+
     .task-title-text {
       font-size: 0.95rem;
+      word-break: break-word;
+      display: block;
     }
 
     .completed .task-title-text {
@@ -1024,6 +1055,7 @@
       color: var(--text-muted);
       font-size: 1.2rem;
       cursor: pointer;
+      flex-shrink: 0;
     }
 
     .delete-task-btn:hover {
@@ -1079,27 +1111,32 @@
       background: rgba(255,255,255,0.02);
       border: 1px solid rgba(255,255,255,0.04);
       border-radius: 10px;
+      gap: 10px;
     }
 
     .file-card-header {
       display: flex;
       align-items: center;
       gap: 12px;
+      flex: 1;
+      min-width: 0;
     }
 
     .file-icon-large {
       font-size: 1.5rem;
+      flex-shrink: 0;
     }
 
     .file-meta-details {
       display: flex;
       flex-direction: column;
+      min-width: 0;
     }
 
     .file-title-text {
       font-size: 0.9rem;
       font-weight: 500;
-      max-width: 180px;
+      max-width: 100%;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
@@ -1113,6 +1150,7 @@
     .file-card-actions {
       display: flex;
       gap: 8px;
+      flex-shrink: 0;
     }
 
     .action-btn {
@@ -1605,7 +1643,7 @@
 
     @media (max-width: 768px) {
       .content-area {
-        padding: 90px 16px 80px 16px; /* Optimized safety area for scrolling and widgets */
+        padding: 90px 16px 80px 16px; 
       }
 
       .dashboard-welcome-title {
@@ -1621,7 +1659,7 @@
       }
 
       .sidebar {
-        width: 82vw; /* Generous navigation width on small viewports */
+        width: 82vw; 
         max-width: 310px;
       }
 
@@ -1654,6 +1692,50 @@
 
       #live-time {
         font-size: 1.8rem;
+      }
+    }
+
+    @media (max-width: 576px) {
+      /* Deep optimization for small mobile viewports (Core Routine page) */
+      .schedule-slot-card {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 16px;
+      }
+
+      .slot-time-badge {
+        width: 100%;
+        text-align: left;
+        min-width: unset;
+      }
+
+      /* Calendar elements formatting to fit smallest touch targets */
+      .calendar-wrapper {
+        padding: 12px;
+      }
+
+      .calendar-day-cell {
+        height: 35px;
+        font-size: 0.8rem;
+      }
+
+      .calendar-weekdays {
+        font-size: 0.75rem;
+      }
+    }
+
+    @media (max-width: 500px) {
+      /* Flow optimizer for task additions on mobile screens */
+      .task-form-row {
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .task-form-row select, 
+      .task-form-row .add-task-btn {
+        width: 100%;
+        box-sizing: border-box;
       }
     }
   </style>
