@@ -1768,11 +1768,11 @@
         </select>
         
         <label for="login-key">Enter Our Secret Key:</label>
-        <input type="password" id="login-key" placeholder="Confession Day" required />
+        <input type="password" id="login-key" placeholder="Confesion Day" required />
         
         <button type="submit" class="login-btn">Unlock Connection</button>
       </form>
-      <p class="passkey-hint">Hint: Enter 'Confession Day'</p>
+      <p class="passkey-hint">Hint: Enter 'Confesion Day'</p>
     </div>
   </div>
 
@@ -2399,7 +2399,7 @@
         try {
           const payload = JSON.parse(event.data);
           // ntfy wraps payloads under data.message
-          if (payload.message) {
+          if (payload.event === "message" && payload.message) {
             const msg = JSON.parse(payload.message);
             if (msg.type === "ripple" && msg.sender !== currentUser) {
               triggerRippleEffect(msg.sender);
